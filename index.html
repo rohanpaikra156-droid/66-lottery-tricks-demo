@@ -1,0 +1,132 @@
+!doctype html>
+<html lang="hi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1">
+<title>ColorPlay Demo</title>
+<style>
+*{box-sizing:border-box;touch-action:manipulation}
+body{margin:0;background:#f2f3f7;font-family:Arial,sans-serif;color:#222}
+button{font:inherit;border:0;cursor:pointer}
+.top{height:66px;background:#ed2028;color:#fff;display:flex;align-items:center;justify-content:space-between;padding:0 16px}
+.logo{font-weight:800;font-size:23px}.back{font-size:38px}.menu{font-size:25px}
+.balance{background:#fff;margin:0 20px;border-radius:0 0 30px 30px;text-align:center;padding:14px 10px 24px;box-shadow:0 2px 7px #ddd}
+.coin{font-size:29px;font-weight:800}.demo{font-size:13px;color:#777;margin-top:4px}
+.tabs{display:flex;background:#fff;margin:16px 8px 10px;border-radius:17px;overflow:hidden}
+.tab{flex:1;background:#fff;color:#777;padding:12px 2px;font-size:11px;font-weight:700}.tab.active{background:#ff686c;color:#fff}
+.info{margin:10px;background:#ff6267;color:#fff;border-radius:17px;padding:15px;display:flex}
+.left,.right{width:50%}.right{text-align:center;border-left:1px dashed #fff}.how{border:1px solid #fff;border-radius:20px;text-align:center;padding:7px;margin-bottom:10px}
+.timer{font-size:29px;font-weight:800;margin:7px}.period{font-weight:700}
+.card{background:#fff;margin:10px;border-radius:17px;padding:14px}.title{font-weight:800;font-size:18px;margin:3px 0 12px}
+.row{display:flex;gap:8px}.color{flex:1;padding:14px 3px;border-radius:8px;color:#fff;font-weight:800}
+.green{background:#36ad77}.violet{background:#9849e5}.red{background:#ef505a}
+.nums{display:grid;grid-template-columns:repeat(5,1fr);gap:9px}.num{aspect-ratio:1;border-radius:50%;background:#fff;border:5px solid #ddd;font-weight:800;font-size:19px}
+.nv{color:#7229c7;border-color:#c397ed}.ng{color:#15985f;border-color:#8bdfbd}.nr{color:#e5404d;border-color:#ff9da3}
+.quick{display:flex;gap:5px;margin-top:10px}.quick button{flex:1;background:#eee;padding:10px 2px;border-radius:6px;font-size:12px}.quick .active{background:#45ad7a;color:#fff}
+.big,.small{flex:1;padding:16px;color:#fff;font-weight:800;font-size:19px}.big{background:#ffa827;border-radius:25px 0 0 25px}.small{background:#65a3e6;border-radius:0 25px 25px 0}
+.practice{width:100%;background:#ff9e22;color:#fff;padding:15px;border-radius:9px;margin-top:14px;font-weight:800}
+.result{text-align:center;background:#f5f5f5;border-radius:10px;padding:12px;margin-top:12px}
+.history-head{display:flex;margin:-14px -14px 0}.history-head div{flex:1;text-align:center;padding:13px;background:#eee;font-weight:800}.history-head .on{background:#ff6267;color:#fff}.item{padding:10px 2px;border-bottom:1px solid #eee;font-size:13px}
+.overlay{position:fixed;inset:0;background:#000a;display:none;align-items:flex-end;z-index:10}.sheet{width:100%;background:#fff;border-radius:24px 24px 0 0}
+.sheet-top{background:#ffad24;color:#fff;text-align:center;padding:22px}.sheet-top h2{margin:0 0 14px}.selected{background:#fff;color:#222;border-radius:8px;padding:10px}
+.sheet-body{padding:15px 18px}.line{display:flex;align-items:center;justify-content:space-between;margin:14px 0}.amounts{display:flex;gap:5px}.amount{background:#eee;padding:9px 10px}.amount.sel{background:#ffad24;color:#fff}.qty{display:flex;align-items:center}.qty button{width:48px;height:46px;background:#ffad24;color:#fff;font-size:27px}.qv{width:80px;height:46px;border:1px solid #ddd;text-align:center;line-height:46px}.sheet-foot{display:flex}.cancel{width:34%;background:#26273e;color:#fff;padding:16px}.confirm{flex:1;background:#ffab25;color:#fff;font-weight:800}
+.result-overlay{position:fixed;inset:0;background:#000b;display:none;align-items:center;justify-content:center;padding:18px;z-index:20}.pop{width:100%;max-width:380px;text-align:center;color:#fff;border-radius:25px;padding:27px 18px}.win{background:linear-gradient(#ff793f,#ff2028)}.loss{background:linear-gradient(#555,#171717)}.icon{font-size:60px}.pop h1{font-size:33px;margin:7px}.chips{display:flex;justify-content:center;gap:6px;margin:18px 0}.chips span{background:#fff;color:#222;padding:9px;border-radius:8px;font-weight:800}.ok{width:80%;background:#fff;color:#222;padding:13px;border-radius:25px;margin-top:18px;font-weight:800}
+</style>
+</head>
+<body>
+<div class="top"><div class="back">‹</div><div class="logo">🎨 ColorPlay</div><div class="menu">☰</div></div>
+<div class="balance"><div class="coin">🪙 <span id="balance">10000</span></div><div>Demo Points</div><div class="demo">Practice only • No cash value</div></div>
+
+<div class="tabs">
+<button class="tab active" data-time="60">⏱️<br>1 Min</button>
+<button class="tab" data-time="30">⏱️<br>30 Sec</button>
+<button class="tab" data-time="180">⏱️<br>3 Min</button>
+<button class="tab" data-time="300">⏱️<br>5 Min</button>
+<button class="tab" data-time="600">⏱️<br>10 Min</button>
+</div>
+
+<div class="info"><div class="left"><div class="how">📖 How to play</div><div id="gameName">WinGo 1 minute</div><div class="period">Practice Round</div></div><div class="right"><div>Time remaining</div><div class="timer" id="timer">01:00</div><div id="period">202608290001</div></div></div>
+
+<div class="card">
+<div class="title">🎨 Colour</div>
+<div class="row"><button class="color green pick" data-pick="Green">Green<br>2X</button><button class="color violet pick" data-pick="Violet">Violet<br>4.5X</button><button class="color red pick" data-pick="Red">Red<br>2X</button></div>
+<div class="title" style="margin-top:20px">🔢 Number</div>
+<div class="nums">
+<button class="num nv pick" data-pick="0">0</button><button class="num ng pick" data-pick="1">1</button><button class="num nr pick" data-pick="2">2</button><button class="num ng pick" data-pick="3">3</button><button class="num nr pick" data-pick="4">4</button><button class="num nv pick" data-pick="5">5</button><button class="num nr pick" data-pick="6">6</button><button class="num ng pick" data-pick="7">7</button><button class="num nr pick" data-pick="8">8</button><button class="num ng pick" data-pick="9">9</button>
+</div>
+<div class="title" style="margin-top:20px">🎲 Multiplier</div>
+<div class="quick" id="quick"><button class="active" data-m="1">X1</button><button data-m="5">X5</button><button data-m="10">X10</button><button data-m="20">X20</button><button data-m="50">X50</button></div>
+<div class="title" style="margin-top:20px">📊 Big / Small</div>
+<div class="row"><button class="big pick" data-pick="Big">Big 2X</button><button class="small pick" data-pick="Small">Small 2X</button></div>
+<button class="practice pick" data-pick="Random">🎯 Practice / Bet</button>
+<div class="result" id="result">Option चुनें और Practice / Bet दबाएँ</div>
+</div>
+
+<div class="card"><div class="history-head"><div class="on">Game History</div><div>My History</div></div><div id="history">अभी कोई practice नहीं हुई।</div></div>
+
+<div class="overlay" id="betOverlay"><div class="sheet">
+<div class="sheet-top"><h2 id="sheetTitle">WinGo 1 minute</h2><div class="selected">Select &nbsp;<b id="selected">Random</b></div></div>
+<div class="sheet-body">
+<div class="line"><b>Base Points</b><div class="amounts"><button class="amount sel" data-base="1">1</button><button class="amount" data-base="10">10</button><button class="amount" data-base="100">100</button><button class="amount" data-base="1000">1000</button></div></div>
+<div class="line"><b>Quantity</b><div class="qty"><button id="minus">−</button><div class="qv" id="qty">1</div><button id="plus">+</button></div></div>
+<div><b>Multiplier</b></div>
+<div class="quick" id="sheetQuick"><button class="active" data-sm="1">X1</button><button data-sm="5">X5</button><button data-sm="10">X10</button><button data-sm="20">X20</button><button data-sm="50">X50</button><button data-sm="100">X100</button></div>
+<label style="display:block;margin-top:18px"><input type="checkbox" id="agree"> I agree to Practice rules</label>
+</div>
+<div class="sheet-foot"><button class="cancel" id="cancel">Cancel</button><button class="confirm" id="confirm">Total amount 1 Demo Point</button></div>
+</div></div>
+
+<div class="result-overlay" id="resultOverlay">
+<div class="pop win" id="winPop"><div class="icon">🏆</div><h1>Congratulations!</h1><p>Practice Result</p><div class="chips"><span id="wc">Green</span><span id="wn">9</span><span id="ws">Big</span></div><h2>🎉 YOU WIN</h2><div>+<b id="wr">2</b> Demo Points</div><button class="ok" onclick="closeResult()">OK</button></div>
+<div class="pop loss" id="lossPop" style="display:none"><div class="icon">❌</div><h1>LOSS</h1><p>Practice Result</p><div class="chips"><span id="lc">Green</span><span id="ln">4</span><span id="ls">Small</span></div><h2 style="color:#ff5555">😔 YOU LOST</h2><div>-<b id="la">1</b> Demo Point</div><button class="ok" onclick="closeResult()">OK</button></div>
+</div>
+
+<script>
+(function(){
+const KEY="colorplay_demo_v3_10000";
+let state={balance:10000,history:[],round:1};
+try{const old=JSON.parse(localStorage.getItem(KEY));if(old)state=old}catch(e){}
+let seconds=60,gameSeconds=60,base=1,qty=1,mul=1,choice="Random",pending=null;
+const $=id=>document.getElementById(id);
+function save(){localStorage.setItem(KEY,JSON.stringify(state));$("balance").textContent=state.balance}
+function period(){return"20260829"+String(state.round).padStart(4,"0")}
+function showTimer(){let m=Math.floor(seconds/60),s=seconds%60;$("timer").textContent=String(m).padStart(2,"0")+":"+String(s).padStart(2,"0")}
+function total(){return base*qty*mul}
+function updateTotal(){$("confirm").textContent="Total amount "+total()+" Demo Point"}
+
+document.querySelectorAll(".tab").forEach(b=>b.addEventListener("click",()=>{document.querySelectorAll(".tab").forEach(x=>x.classList.remove("active"));b.classList.add("active");gameSeconds=+b.dataset.time;seconds=gameSeconds;let n=gameSeconds===60?"WinGo 1 minute":gameSeconds===30?"WinGo 30 seconds":gameSeconds===180?"WinGo 3 minutes":gameSeconds===300?"WinGo 5 minutes":"WinGo 10 minutes";$("gameName").textContent=n;$("sheetTitle").textContent=n;showTimer()}));
+document.querySelectorAll(".pick").forEach(b=>b.addEventListener("click",()=>{choice=b.dataset.pick;$("selected").textContent=choice;$("betOverlay").style.display="flex";updateTotal()}));
+document.querySelectorAll("#quick button").forEach(b=>b.addEventListener("click",()=>{document.querySelectorAll("#quick button").forEach(x=>x.classList.remove("active"));b.classList.add("active");mul=+b.dataset.m}));
+document.querySelectorAll(".amount").forEach(b=>b.addEventListener("click",()=>{document.querySelectorAll(".amount").forEach(x=>x.classList.remove("sel"));b.classList.add("sel");base=+b.dataset.base;updateTotal()}));
+document.querySelectorAll("#sheetQuick button").forEach(b=>b.addEventListener("click",()=>{document.querySelectorAll("#sheetQuick button").forEach(x=>x.classList.remove("active"));b.classList.add("active");mul=+b.dataset.sm;updateTotal()}));
+$("minus").onclick=()=>{qty=Math.max(1,qty-1);$("qty").textContent=qty;updateTotal()};
+$("plus").onclick=()=>{qty=Math.min(100,qty+1);$("qty").textContent=qty;updateTotal()};
+$("cancel").onclick=()=>{$("betOverlay").style.display="none"};
+$("confirm").onclick=()=>{
+ if(!$("agree").checked){alert("I agree चुनें।");return}
+ const amount=total();
+ if(amount>state.balance){alert("Demo Points पर्याप्त नहीं हैं।");return}
+ state.balance-=amount;
+ pending={choice,amount};
+ $("betOverlay").style.display="none";
+ $("result").innerHTML="⏳ Selection accepted — timer खत्म होने पर result मिलेगा";
+ save();
+};
+function finish(){
+ if(!pending)return;
+ const p=pending;pending=null;
+ const n=Math.floor(Math.random()*10),c=(n===0||n===5)?"Violet":(n%2?"Green":"Red"),s=n>=5?"Big":"Small";
+ const win=p.choice==="Random"?Math.random()>.5:(p.choice==="Big"||p.choice==="Small"?p.choice===s:(["Red","Green","Violet"].includes(p.choice)?p.choice===c:+p.choice===n));
+ const reward=win?p.amount*2:0;if(win)state.balance+=reward;
+ state.history.unshift({period:period(),choice:p.choice,number:n,color:c,size:s,amount:p.amount,result:win?"WIN":"LOSS"});
+ state.history=state.history.slice(0,30);state.round++;save();render();
+ if(win){$("wc").textContent=c;$("wn").textContent=n;$("ws").textContent=s;$("wr").textContent=reward;$("winPop").style.display="block";$("lossPop").style.display="none";$("result").innerHTML="🏆 <b>YOU WIN!</b>"}else{$("lc").textContent=c;$("ln").textContent=n;$("ls").textContent=s;$("la").textContent=p.amount;$("lossPop").style.display="block";$("winPop").style.display="none";$("result").innerHTML="❌ <b>LOSS</b>"}$("resultOverlay").style.display="flex";$("period").textContent=period()
+}
+function render(){if(!state.history.length){$("history").textContent="अभी कोई practice नहीं हुई।";return}$("history").innerHTML=state.history.map(x=>(x.result==="WIN"?"🟢":"🔴")+" <b>"+x.result+"</b> • "+x.period+"<br>Choice: "+x.choice+" | Number: "+x.number+" | "+x.size+" | "+x.amount+" points").join("<div class='item'></div>")}
+window.closeResult=()=>{$("resultOverlay").style.display="none"};
+setInterval(()=>{seconds--;if(seconds<=0){seconds=gameSeconds;finish();state.round++;$("period").textContent=period();save()}showTimer()},1000);
+$("period").textContent=period();showTimer();save();render();
+})();
+</script>
+</body>
+</html>
